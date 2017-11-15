@@ -23,9 +23,12 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.editor.plugin;
 
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,6 +127,28 @@ public class FileActionProvider {
 		types.put(type, action);
 	}
 
+
+	String showFileDialog (Frame frame, String dialogTitle, String defaultDirectory, String fileType)
+	{
+		FileDialog fd = new FileDialog(frame, dialogTitle, FileDialog.LOAD);
+		fd.setFile(fileType);
+		fd.setDirectory(defaultDirectory);
+		fd.setLocationRelativeTo(frame);
+		fd.setVisible(true);
+		String directory = fd.getDirectory();
+		String filename = fd.getFile();
+		if (directory == null || filename == null || directory.trim().equals("") || filename.trim().equals(""))
+		{
+			return null;
+		}
+		else
+		{
+			// this was not needed on mac os x:
+			//return directory + System.getProperty("file.separator") + filename;
+			return directory + filename;
+		}
+	}
+
 	private Action makeOpenAction(final UserInterface ui) {
 
 		return new AbstractAction() {
@@ -144,8 +169,8 @@ public class FileActionProvider {
 				putValue(Action.NAME, "Open File");
 			}
 
-			public void actionPerformed(ActionEvent e) {
-				
+			
+			public void actionPerformed(ActionEvent e) {		
 				List<String> filters = new ArrayList<String>();
 				for (FileHandler h : Editor.getEditor().getFileHandlers()) {
 					for (int j = 0; j < h.getFileDescriptions().length; j++) {
@@ -153,25 +178,19 @@ public class FileActionProvider {
 						filters.add(h.getFileTypes()[j]);
 					}
 				}
-
-				File[] files = Utilities.chooseFiles(AbstractFileHandler.FILE_CHOOSER, ui.currentTab(), true,
-						true, "Open file", null, filters.toArray(new String[filters.size()]));
-				if (files != null) {
-					for (File file : files) {
-						try {
-							Editor.getEditor().load(file.toURI().toURL());
-						} catch (IOException e1) {
-							ui.errorMessage(e1, null, null);
-						} catch (URISyntaxException e1) {
-							ui.errorMessage(e1, null, null);
-						}						
-					}
-				}
-
+				String fn = showFileDialog((Frame)ui,"Open file...",null, null);
+				URI fileuri = URI.create("file://"+fn);
+				try {
+					Editor.getEditor().load(fileuri.toURL());
+				} catch (IOException e1) {
+					ui.errorMessage(e1, null, null);
+				} catch (URISyntaxException e1) {
+					ui.errorMessage(e1, null, null);
+				}						
 			}
-
 		};
 	}
+		
 
 	private Action makeSaveAction(final FileHandler handler,
 			final UserInterface ui) {
