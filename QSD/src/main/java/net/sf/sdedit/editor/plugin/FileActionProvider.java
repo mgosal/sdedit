@@ -169,7 +169,6 @@ public class FileActionProvider {
 				putValue(Action.NAME, "Open File");
 			}
 
-			
 			public void actionPerformed(ActionEvent e) {		
 				List<String> filters = new ArrayList<String>();
 				for (FileHandler h : Editor.getEditor().getFileHandlers()) {
