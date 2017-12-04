@@ -134,6 +134,10 @@ public final class Editor implements Constants, UserInterfaceListener
 
 	}
 
+	private void readLastWrokingDir()
+	{
+		String lastWrkDir = globalConfiguration.getLastWorkDir();
+	}
 	public void start() {
 		setupUI();
 		for (Plugin plugin : PluginRegistry.getInstance()) {
@@ -141,6 +145,7 @@ public final class Editor implements Constants, UserInterfaceListener
 				addFileHandler(handler);
 			}
 		}
+		readLastWrokingDir();
 		readRecentFiles();
 		if (globalConfiguration.isAutostartServer()) {
 			try {
@@ -195,7 +200,14 @@ public final class Editor implements Constants, UserInterfaceListener
 			}
 		};
 	}
-
+	private FileHandler findFileHandlerNoExtension(String type) {
+		for (FileHandler fileHandler : fileHandlers) {
+			if(fileHandler.canLoad()){
+				return fileHandler;
+			}
+		}
+		return null;
+	}
 	private FileHandler findFileHandler(String type) {
 		for (FileHandler fileHandler : fileHandlers) {
 			for (String ext : fileHandler.getFileTypes()) {
@@ -224,6 +236,10 @@ public final class Editor implements Constants, UserInterfaceListener
 		if (d >= 0) {
 			String ext = file.substring(d + 1);
 			handler = findFileHandler(ext);
+		}
+		else if(d==-1)
+		{
+			handler = findFileHandlerNoExtension(file);
 		}
 		if (handler == null) {
 			ui.errorMessage(null, null,

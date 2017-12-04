@@ -178,9 +178,9 @@ public class FileActionProvider {
 					}
 				}
 				String fn = showFileDialog((Frame)ui,"Open file...",null, null);
-				URI fileuri = URI.create("file://"+fn);
+				//URI fileuri = URI.create(fn);
 				try {
-					Editor.getEditor().load(fileuri.toURL());
+					Editor.getEditor().load(new File(fn).toURI().toURL());
 				} catch (IOException e1) {
 					ui.errorMessage(e1, null, null);
 				} catch (URISyntaxException e1) {

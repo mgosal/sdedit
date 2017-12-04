@@ -59,6 +59,8 @@ public interface GlobalConfiguration extends DataObject {
 
 	public int getTooltipDismissDelay();
 
+	public String getLastWorkDir();
+	
 	public boolean isHighlightCurrent();
 
 	@Adjustable(dflt = 2, min = 1, max = 999, category = "Automation", info = "Redraw/syntax check delay (20 ms)")
@@ -96,6 +98,9 @@ public interface GlobalConfiguration extends DataObject {
 
 	@Adjustable(category = "Misc", editable = true, min = 1, max = 100, info = "Time (in seconds) before a tooltip disappears")
 	public void setTooltipDismissDelay(int seconds);
+
+	@Adjustable(category = "Misc", editable = false, info = "Last work directory")
+	public void getLastWorkDir(String latWrkDir);
 
 	@Adjustable(category = "Misc", editable = true, info = "Highlight current message")
 	public void setHighlightCurrent(boolean on);
