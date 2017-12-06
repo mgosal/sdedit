@@ -1,2 +1,1 @@
-# sdedit
 use save as
